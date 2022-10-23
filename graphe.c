@@ -33,15 +33,14 @@ Graphe * lire_graphe(char * nomFichier)
 
     fscanf(ifs,"%d\n",&ordre);
 
-
     graphe=CreerGraphe(ordre); // creer le graphe en fonction de son ordre je lis l'odre sur le fichier et je l'affecte à ma valeur ordre de ma struct graphe
     for(int i=0;i<ordre;i++)
     {
-        fscanf(ifs,"%c",&graphe->id_sommet[i]);//on rempli notre tableau de sommet par la valeur des sommets qu'on lit dans le fichier
-
+        fscanf(ifs,"%c ",&graphe->id_sommet[i]);//on rempli notre tableau de sommet par la valeur des sommets qu'on lit dans le fichier
+        printf("lettre %d : %c\n", i, graphe->id_sommet[i]);
     }
+    //j'ai rajouté un espace après le %c pour pouvoir lire la valeur qu'on a espacé dans le fichier c'est pour ça que ça buggait
     graphe->ordre=ordre;
-    printf("ordre %d", ordre);
 
 
     //on remplit la matrice de capa
@@ -51,9 +50,7 @@ Graphe * lire_graphe(char * nomFichier)
         {
             fscanf(ifs,"%d",&graphe->mat_capacite[i][j]);//on remplit la case
         }
-
         //on passe a la ligne suivante du fichier
-
     }
 
 
@@ -62,17 +59,20 @@ Graphe * lire_graphe(char * nomFichier)
 }
 void afficher_graphe(Graphe * graphe)
 {
-    printf("%d\n",graphe->ordre); //on affiche l'ordre
+    printf("%d\n  ",graphe->ordre); //on affiche l'ordre
+    for(int i=0; i<graphe->ordre; i++)
+    {
+        printf("%c\t", graphe->id_sommet[i]);
+    }
     printf("\n");
     for(int i=0;i<graphe->ordre;i++)
     {
         printf("%c ",graphe->id_sommet[i]);//on affiche le noms des sommets
         for(int j=0;j<graphe->ordre;j++)
         {
-            printf("%d\n",graphe->mat_capacite[i][j]);
-
+            printf("%d\t",graphe->mat_capacite[i][j]);
         }
-        printf("ho\n");
+        printf("\n");
     }
 }
 //on fait un bfs
