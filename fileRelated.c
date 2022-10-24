@@ -46,9 +46,9 @@ void enfiler(t_file *f,t_id_sommet nouv)
 //o
 t_id_sommet defiler(t_file* f)
 {
-    t_maillon* ptcourant=NULL;
-    t_maillon* ptprecedent=NULL;
+    t_maillon* temp=NULL;
     t_id_sommet res;
+
 
     if(estVide(f)==1)
     {
@@ -57,7 +57,11 @@ t_id_sommet defiler(t_file* f)
     }
     else
     {
-        f->maillon_a_defiler
+        temp=f->maillon_a_defiler;
+        res=f->maillon_a_defiler->s;
+        f->maillon_a_defiler=f->maillon_a_defiler->prev;
+        f->maillon_a_defiler->prev->next=NULL;
+        free(temp);
         return res;
     }
 }
