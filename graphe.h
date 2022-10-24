@@ -8,13 +8,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct id_sommet
+{
+    char lettre;
+    int marque;//pour DFS
+    int pred;
+}t_id_sommet;
+
+
 typedef struct Graphe
 {
     int ordre;
-    char *id_sommet;
+    t_id_sommet* tab_sommet;//tableau de sommet
     int **mat_capacite;
     int **mat_flot;
 } Graphe;
+
 
 Graphe* CreerGraphe(int ordre);
 Graphe * lire_graphe(char * nomFichier);
