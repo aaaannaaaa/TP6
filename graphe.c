@@ -53,7 +53,7 @@ Graphe * lire_graphe(char * nomFichier)
         //on passe a la ligne suivante du fichier
     }
 
-
+//o
 
     return graphe;
 }

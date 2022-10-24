@@ -13,7 +13,7 @@ typedef struct maillon
     struct maillon* next;
     struct maillon* prev;
 }t_maillon;
-
+//o
 typedef struct file
 {
     struct maillon* maillon_a_enfiler;

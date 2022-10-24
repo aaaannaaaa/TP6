@@ -5,7 +5,7 @@ int main() {
     afficher_graphe(G);
     return 0;
 }
-
+//o
 /*prochaine étape :
  1/création des arretes à partir de la matrice
  2/création du BFS revisité pour notre problème(la condition de fin est quand le puit est rajouté dans la file)

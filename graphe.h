@@ -23,7 +23,7 @@ typedef struct Graphe
     int **mat_capacite;
     int **mat_flot;
 } Graphe;
-
+//o
 
 Graphe* CreerGraphe(int ordre);
 Graphe * lire_graphe(char * nomFichier);

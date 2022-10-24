@@ -43,7 +43,7 @@ void enfiler(t_file *f,t_id_sommet nouv)
         }
     }
 }
-
+//o
 t_id_sommet defiler(t_file* f)
 {
     t_maillon* ptcourant=NULL;
