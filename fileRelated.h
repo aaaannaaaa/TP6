@@ -9,7 +9,7 @@
 
 typedef struct maillon
 {
-    t_id_sommet s;
+    t_id_sommet* s;
     struct maillon* next;
     struct maillon* prev;
 }t_maillon;
@@ -21,6 +21,9 @@ typedef struct file
 }t_file;
 
 int estVide(t_file* fAttente);
-void enfiler(t_file *f,t_id_sommet nouv);
+t_file* creation();
+void enfiler(t_file *f,t_id_sommet* nouv);
+int conditionFin(t_id_sommet* s, char puit);
+t_id_sommet* defiler(t_file* f);
 
 #endif //TP6_FILERELATED_H

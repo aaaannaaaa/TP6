@@ -7,7 +7,7 @@ int main() {
 }
 //o
 /*prochaine étape :
- 1/création des arretes à partir de la matrice
+ 1/création des arretes à partir de la matrice / mais je prefere pas
  2/création du BFS revisité pour notre problème(la condition de fin est quand le puit est rajouté dans la file)
  3/cration de l'algorithme de FordFulkerson(jsp pour l'orthographe) et implémentation en C
 */

@@ -5,6 +5,14 @@
 #include "fileRelated.h"
 
 //Fonction File//
+t_file* creation()
+{
+    t_file* f=(t_file*)malloc(sizeof(t_file));
+    f->maillon_a_defiler=NULL;
+    f->maillon_a_enfiler=NULL;
+    return f;
+}
+
 int estVide(t_file* fAttente)
 {
     if (fAttente->maillon_a_defiler == NULL && fAttente->maillon_a_enfiler == NULL)
@@ -14,7 +22,7 @@ int estVide(t_file* fAttente)
 }
 
 
-void enfiler(t_file *f,t_id_sommet nouv)
+void enfiler(t_file *f,t_id_sommet* nouv)
 {
     t_maillon* nouveau;
 
@@ -44,10 +52,10 @@ void enfiler(t_file *f,t_id_sommet nouv)
     }
 }
 //o
-t_id_sommet defiler(t_file* f)
+t_id_sommet* defiler(t_file* f)
 {
     t_maillon* temp=NULL;
-    t_id_sommet res;
+    t_id_sommet* res;
 
 
     if(estVide(f)==1)
@@ -63,5 +71,17 @@ t_id_sommet defiler(t_file* f)
         f->maillon_a_defiler->prev->next=NULL;
         free(temp);
         return res;
+    }
+}
+
+int conditionFin(t_id_sommet* s, char puit)
+{
+    if(s->lettre==puit)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
     }
 }
