@@ -31,5 +31,8 @@ Graphe * lire_graphe(char * nomFichier);
 t_id_sommet* recherche(Graphe* g, char lettre);
 int rechercheFlotMax(Graphe* g, t_id_sommet* depart);//depart qu'on retrouve en utilisant recherche
 Graphe* MaJFlotGraphe(Graphe* g, t_id_sommet* depart, int flotMax);
+Graphe* BFS(Graphe* g, int* verifFin);
+Graphe* fordFulkerson(Graphe* g);
+void calculFlotMax(Graphe* g);
 void afficher_graphe(Graphe * graphe);
 #endif //TP6_GRAPHE_H

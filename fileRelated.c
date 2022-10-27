@@ -22,7 +22,7 @@ int estVide(t_file* fAttente)
 }
 
 
-void enfiler(t_file *f,t_id_sommet* nouv)
+t_file* enfiler(t_file *f,t_id_sommet* nouv)
 {
     t_maillon* nouveau;
 
@@ -50,13 +50,12 @@ void enfiler(t_file *f,t_id_sommet* nouv)
             f->maillon_a_enfiler=nouveau;
         }
     }
+    return f;
 }
 //o
-t_id_sommet* defiler(t_file* f)
+t_file* defiler(t_file* f, t_id_sommet** res)
 {
     t_maillon* temp=NULL;
-    t_id_sommet* res;
-
 
     if(estVide(f)==1)
     {
@@ -66,11 +65,20 @@ t_id_sommet* defiler(t_file* f)
     else
     {
         temp=f->maillon_a_defiler;
-        res=f->maillon_a_defiler->s;
-        f->maillon_a_defiler=f->maillon_a_defiler->prev;
-        f->maillon_a_defiler->prev->next=NULL;
-        free(temp);
-        return res;
+        *res=f->maillon_a_defiler->s;
+        if(f->maillon_a_defiler==f->maillon_a_enfiler)
+        {
+            f->maillon_a_enfiler=NULL;
+            f->maillon_a_defiler=NULL;
+            free(temp);
+        }
+        else
+        {
+            f->maillon_a_defiler=f->maillon_a_defiler->prev;
+            f->maillon_a_defiler->next=NULL;
+            free(temp);
+        }
+        return f;
     }
 }
 
@@ -84,4 +92,22 @@ int conditionFin(t_id_sommet* s, char puit)
     {
         return 0;
     }
+}
+
+void afficherListe(t_file* f)
+{
+    t_maillon* parcours=f->maillon_a_enfiler;
+    if(estVide(f))
+    {
+        printf("La liste est vide rien a afficher\n");
+    }
+    else
+    {
+        while(parcours!=NULL)
+        {
+            printf("%c\n", parcours->s->lettre);
+            parcours=parcours->next;
+        }
+    }
+
 }

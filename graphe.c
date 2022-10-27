@@ -52,6 +52,7 @@ Graphe * lire_graphe(char * nomFichier)
         for(int j=0;j<ordre;j++)
         {
             fscanf(ifs,"%d",&graphe->mat_capacite[i][j]);//on remplit la case
+            graphe->mat_flot[i][j]=0;
         }
         //on passe a la ligne suivante du fichier
     }
@@ -68,6 +69,7 @@ void afficher_graphe(Graphe * graphe)
         printf("%c\t", graphe->tab_sommet[i]->lettre);
     }
     printf("\n");
+    printf("\t Matrice de capacite\n");
     for(int i=0;i<graphe->ordre;i++)
     {
         printf("%c ",graphe->tab_sommet[i]->lettre);//on affiche le noms des sommets
@@ -77,10 +79,20 @@ void afficher_graphe(Graphe * graphe)
         }
         printf("\n");
     }
+    printf("\t Matrice de flot\n");
+    for(int i=0;i<graphe->ordre;i++)
+    {
+        printf("%c ",graphe->tab_sommet[i]->lettre);//on affiche le noms des sommets
+        for(int j=0;j<graphe->ordre;j++)
+        {
+            printf("%d\t",graphe->mat_flot[i][j]);
+        }
+        printf("\n");
+    }
 }
 //on fait un bfs
-//on crée un file
-t_id_sommet* recherche(Graphe* g, char lettre)
+
+t_id_sommet* recherche(Graphe* g, char lettre)//pour rechercher un sommet a partir de son nom
 {
     for(int i=0; i<g->ordre; i++)
     {
@@ -100,15 +112,19 @@ int rechercheFlotMax(Graphe* g, t_id_sommet* depart)//depart qu'on retrouve en u
     int tempFlotRestant=0;
     while(g->tab_sommet[sommetActu]->pred!=-1)
     {
+        printf("sommet %c : ", g->tab_sommet[sommetActu]->lettre);
         sommetPred=g->tab_sommet[sommetActu]->pred;
-        tempFlotRestant=g->mat_capacite[sommetActu][sommetPred];
+        tempFlotRestant=g->mat_capacite[sommetPred][sommetActu]-g->mat_flot[sommetPred][sommetActu];
+        printf("%d -> ", tempFlotRestant);
         if(tempFlotRestant<flotMax)
         {
            flotMax=tempFlotRestant;
         }
         sommetActu=sommetPred;
     }
-    return tempFlotRestant;
+    printf("sommet O");
+    printf("\n");
+    return flotMax;
 }
 
 
@@ -119,13 +135,15 @@ Graphe* MaJFlotGraphe(Graphe* g, t_id_sommet* depart, int flotMax)
     while(g->tab_sommet[sommetActu]->pred!=-1)
     {
         sommetPred=g->tab_sommet[sommetActu]->pred;
-        g->mat_flot[sommetActu][sommetPred]+=flotMax;
+        g->mat_flot[sommetPred][sommetActu]+=flotMax;
         sommetActu=sommetPred;
     }
+    return g;
 }
 
-Graphe* BFS(Graphe* g)
+Graphe* BFS(Graphe* g, int* verifFin)
 {
+    printf("BFS en cours\n");
     t_id_sommet* place, *temp;
     char source='O';
     char puit='T';
@@ -135,35 +153,70 @@ Graphe* BFS(Graphe* g)
         g->tab_sommet[i]->marque=0;
         g->tab_sommet[i]->pred=-1;
     }
+
     place=recherche(g, source);
+
     t_file* f=creation();
-    enfiler(f, g->tab_sommet[place->position]);
+
+    f=enfiler(f, g->tab_sommet[place->position]);
+    //afficherListe(f);
+
     g->tab_sommet[place->position]->marque=1;
-    while(verif==0)//rajouter si la liste est vide aussi
+    while(verif==0 && !estVide(f))//rajouter si la liste est vide aussi
     {
-        temp=defiler(f);
+        f=defiler(f, &temp);
+        //printf("Apres defilement : \n");
+        //afficherListe(f);
         for(int i=0; i<g->ordre; i++)
         {
-            if(g->mat_capacite[temp->position][i]!=0 && g->mat_capacite[temp->position][i]!=g->mat_flot[temp->position][i] && g->tab_sommet[i]->marque==0)
+            if(g->mat_capacite[temp->position][i]!=0 && g->mat_capacite[temp->position][i]!=g->mat_flot[temp->position][i] && g->tab_sommet[i]->marque==0)//si le sommet n'est pas marqué et qu'il existe un lien entre les 2 sommets et que l'arrete n'est pas saturé
             {
                 enfiler(f, g->tab_sommet[i]);
-                verif= conditionFin(g->tab_sommet[i], puit);
+                if(verif==0)//on le fait que si verif est tjr égale à 0 sinon on risque d'overwrite la valeur
+                {
+                    verif= conditionFin(g->tab_sommet[i], puit);
+
+                }
                 g->tab_sommet[i]->marque=1;
                 g->tab_sommet[i]->pred=temp->position;
             }
         }
+        //printf("Apres enfilement : \n");
+        //afficherListe(f);
+        //printf("verif final = %d\n", verif);
+    }
+    *verifFin=verif;
+    return g;
+}
+
+Graphe* fordFulkerson(Graphe* g)
+{
+    int finDeParcours=1;
+    int flotMax=0;
+    while(finDeParcours==1)//variable qui sera passé en pointeur du BFS, si le BFS ne trouve pas le puit alors fin
+    {
+        g= BFS(g, &finDeParcours);
+        flotMax=rechercheFlotMax(g, recherche(g, 'T'));
+        printf("flot max = %d\n", flotMax);
+        g= MaJFlotGraphe(g, recherche(g, 'T'), flotMax);
+        //afficher_graphe(g);
+
     }
     return g;
 }
 
-void fordFulkerson(Graphe* g)
+void calculFlotMax(Graphe* g)
 {
-    int finDeParcours=0;
     int flotMax=0;
-    while(finDeParcours==0)//variable qui sera passé en pointeur du BFS, si le BFS ne trouve pas le puit alors fin
+    for(int i=0; i<g->ordre; i++)
     {
-        g= BFS(g);
-        flotMax=rechercheFlotMax(g, recherche(g, 'O'));
-        g= MaJFlotGraphe(g, recherche(g, 'O'), flotMax);
+        for(int j=0; j<g->ordre; j++)
+        {
+            printf("%d\t", g->mat_flot[i][j]);
+            flotMax+=g->mat_flot[i][j];
+        }
+        printf("\n");
     }
+
+    printf("flot max : %d\n", flotMax);
 }
