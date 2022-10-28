@@ -52,7 +52,7 @@ t_file* enfiler(t_file *f,t_id_sommet* nouv)
     }
     return f;
 }
-//o
+
 t_file* defiler(t_file* f, t_id_sommet** res)
 {
     t_maillon* temp=NULL;
@@ -82,19 +82,8 @@ t_file* defiler(t_file* f, t_id_sommet** res)
     }
 }
 
-int conditionFin(t_id_sommet* s, char puit)
-{
-    if(s->lettre==puit)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-}
 
-void afficherListe(t_file* f)
+void afficherListe(t_file* f)// pour debugger
 {
     t_maillon* parcours=f->maillon_a_enfiler;
     if(estVide(f))

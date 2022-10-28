@@ -92,7 +92,7 @@ void afficher_graphe(Graphe * graphe)
 }
 //on fait un bfs
 
-t_id_sommet* rechercheSource(Graphe* g)
+t_id_sommet* rechercheSource(Graphe* g)// on recherche le sommet qui n'a pas de prédécesseur
 {
     int verif;
     int i, j;
@@ -101,14 +101,14 @@ t_id_sommet* rechercheSource(Graphe* g)
         verif=1;
         for(j=0; j<g->ordre; j++)
         {
-            if(g->mat_capacite[j][i]!=0)
+            if(g->mat_capacite[j][i]!=0)//on parcourt colonne par colonne pour voir quels sont les arretes entrant et si on en trouve un c'est que le sommet en cours d'analyse possède des arretes etrant
             {
                 verif=0;
             }
         }
         if(verif==1)
         {
-            break;
+            break;//si on a trouvé une colonne composée que de 0 alors c'est que on a découvert la source, ainsi on sort de la boucle
         }
     }
     if(verif==0)
@@ -119,7 +119,7 @@ t_id_sommet* rechercheSource(Graphe* g)
     return g->tab_sommet[i];
 }
 
-t_id_sommet* recherchePuit(Graphe* g)
+t_id_sommet* recherchePuit(Graphe* g)// meme principe mais on fait le parcourt ligne par ligne
 {
 
     int verif, i, j;
@@ -146,19 +146,19 @@ t_id_sommet* recherchePuit(Graphe* g)
     return g->tab_sommet[i-1];//i-1 car on fait une itération en plus
 }
 
-int rechercheFlotMax(Graphe* g, t_id_sommet* depart)//depart qu'on retrouve en utilisant recherche
+int rechercheFlotMax(Graphe* g, t_id_sommet* depart)//depart qu'on retrouve en utilisant rechercheDePuit
 {
     int flotMax=100;
     int sommetActu=depart->position;
     int sommetPred=-1;
     int tempFlotRestant=0;
-    while(g->tab_sommet[sommetActu]->pred!=-1)
+    while(g->tab_sommet[sommetActu]->pred!=-1)//on utilise les prédécésseurs conserver dans chaque sommets pour retracer le chemin trouvé grace au bsf
     {
         printf("sommet %c : ", g->tab_sommet[sommetActu]->lettre);
         sommetPred=g->tab_sommet[sommetActu]->pred;
-        tempFlotRestant=g->mat_capacite[sommetPred][sommetActu]-g->mat_flot[sommetPred][sommetActu];
+        tempFlotRestant=g->mat_capacite[sommetPred][sommetActu]-g->mat_flot[sommetPred][sommetActu];//commet on parcourt à reculons les arretes on inverse bien sommetPred et sommetActu
         printf("%d -> ", tempFlotRestant);
-        if(tempFlotRestant<flotMax)
+        if(tempFlotRestant<flotMax)//si on trouve une valeur plus faible on la conserve
         {
            flotMax=tempFlotRestant;
         }
@@ -170,7 +170,7 @@ int rechercheFlotMax(Graphe* g, t_id_sommet* depart)//depart qu'on retrouve en u
 }
 
 
-Graphe* MaJFlotGraphe(Graphe* g, t_id_sommet* depart, int flotMax)
+Graphe* MaJFlotGraphe(Graphe* g, t_id_sommet* depart, int flotMax)//avec le sous programme précédent on met a jour le graphe des flots
 {
     int sommetActu=depart->position;
     int sommetPred=-1;
@@ -183,12 +183,11 @@ Graphe* MaJFlotGraphe(Graphe* g, t_id_sommet* depart, int flotMax)
     return g;
 }
 
-Graphe* BFS(Graphe* g, int* verifFin)
+Graphe* BFS(Graphe* g, int* verifFin)//BFS remanié pour s'adapter à FordFulkerson
 {
     printf("BFS en cours\n");
     t_id_sommet* place, *temp;
     temp= recherchePuit(g);
-    char puit=temp->lettre;
     int verif=0;
     for(int i=0; i<g->ordre; i++)
     {
@@ -206,7 +205,7 @@ Graphe* BFS(Graphe* g, int* verifFin)
     g->tab_sommet[place->position]->marque=1;
     while(verif==0 && !estVide(f))//rajouter si la liste est vide aussi
     {
-        f=defiler(f, &temp);
+        f=defiler(f, &temp);//on recupere le sommet défilé dans la variable temp
         //printf("Apres defilement : \n");
         //afficherListe(f);
         for(int i=0; i<g->ordre; i++)
@@ -216,7 +215,7 @@ Graphe* BFS(Graphe* g, int* verifFin)
                 enfiler(f, g->tab_sommet[i]);
                 if(g->tab_sommet[i]== recherchePuit(g))//on le fait que si verif est tjr égale à 0 sinon on risque d'overwrite la valeur
                 {
-                    printf("puit trouve\n");
+                    //printf("puit trouve\n");
                     verif=1;
                 }
                 g->tab_sommet[i]->marque=1;
@@ -227,11 +226,11 @@ Graphe* BFS(Graphe* g, int* verifFin)
         //afficherListe(f);
         //printf("verif final = %d\n", verif);
     }
-    if(verif==0)
+    /*if(verif==0)
     {
         printf("puit non trouve\n");
-    }
-    *verifFin=verif;
+    }*/
+    *verifFin=verif;// on met a jour la valeur pour pouvoir la réutiliser dans le sous programme juste en dessous et signaler la fin
     return g;
 }
 
@@ -251,7 +250,7 @@ Graphe* fordFulkerson(Graphe* g)
     return g;
 }
 
-void calculFlotMax(Graphe* g, t_id_sommet* source)
+void calculFlotMax(Graphe* g, t_id_sommet* source)//flot sortant de la source
 {
     int flotMax=0;
     for(int i=0; i<g->ordre; i++)
@@ -259,7 +258,7 @@ void calculFlotMax(Graphe* g, t_id_sommet* source)
         for(int j=0; j<g->ordre; j++)
         {
             printf("%d\t", g->mat_flot[i][j]);
-            if(g->tab_sommet[i]==source)
+            if(g->tab_sommet[i]==source)//si le sommet correspond a la source on incrémente le flot max en fonction des flots sortants de ce sommet
             {
                 flotMax+=g->mat_flot[i][j];
             }

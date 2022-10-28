@@ -23,7 +23,6 @@ typedef struct file
 int estVide(t_file* fAttente);
 t_file* creation();
 t_file* enfiler(t_file *f,t_id_sommet* nouv);
-int conditionFin(t_id_sommet* s, char puit);
 t_file* defiler(t_file* f, t_id_sommet** res);
 void afficherListe(t_file* f);
 
