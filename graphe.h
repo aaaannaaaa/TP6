@@ -21,18 +21,19 @@ typedef struct Graphe
 {
     int ordre;
     t_id_sommet** tab_sommet;//tableau de sommet dynamique
-    int **mat_capacite;
-    int **mat_flot;
+    int **mat_capacite;//matrice de capacité
+    int **mat_flot;//matrice des flots actuels
 } Graphe;
 //o
 
 Graphe* CreerGraphe(int ordre);
 Graphe * lire_graphe(char * nomFichier);
-t_id_sommet* recherche(Graphe* g, char lettre);
+t_id_sommet* rechercheSource(Graphe* g);
+t_id_sommet* recherchePuit(Graphe* g);
 int rechercheFlotMax(Graphe* g, t_id_sommet* depart);//depart qu'on retrouve en utilisant recherche
 Graphe* MaJFlotGraphe(Graphe* g, t_id_sommet* depart, int flotMax);
 Graphe* BFS(Graphe* g, int* verifFin);
 Graphe* fordFulkerson(Graphe* g);
-void calculFlotMax(Graphe* g);
+void calculFlotMax(Graphe* g, t_id_sommet* source);
 void afficher_graphe(Graphe * graphe);
 #endif //TP6_GRAPHE_H
